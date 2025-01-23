@@ -1,0 +1,43 @@
+
+script_path=$(readlink -f "$0")
+script_dir=$(dirname "$script_path")
+
+# Construct the command for the llama server
+llama_server_command="$script_dir/bin/llama-server -m $script_dir/models/basic.gguf"
+
+# Start the llama server in the background
+$llama_server_command &
+
+# Capture the process ID of the llama server
+llama_server_pid=$!
+
+# Start the UI server in the background
+node "$script_dir/ui/server.js" &
+
+# Capture the process ID of the UI server
+ui_server_pid=$!
+
+# Keep the terminal usable and ensure background processes don't exit prematurely
+echo "Llama server running with PID: $llama_server_pid"
+echo "UI server running with PID: $ui_server_pid"
+echo "Press [Ctrl+C] to terminate both servers."
+
+# Wait for both processes to complete
+wait $llama_server_pid $ui_server_pid
+
+#
+#script_path=$(readlink -f "$0")
+#script_dir=$(dirname "$script_path")
+
+# Construct the command for the llama server
+#command="$script_dir/bin/llama-server -m $script_dir/models/basic.gguf"
+
+# Create the AppleScript command
+#osascript_command="tell application \"Terminal\" to do script \"${command}\""
+
+# Execute the AppleScript
+#osascript -e "$osascript_command"
+
+# Start the UI server
+#node "$script_dir/ui/server.js"
+#
